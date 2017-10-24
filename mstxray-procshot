@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+from __future__ import division, print_function
+import os
+import glob
+import sys
+from subprocess import check_call
+from mstxray import proc
+
+
+def del_current_data(shot):
+    paths = os.path.join('/data/mst/', str(shot)[:3], str(shot)[3:5], 
+                         str(shot)[5:7], 'hxr/*{0}*'.format(shot))
+    for path in glob.glob(paths):
+        print('Deleting:', path)
+        cmd = 'rm ' + path
+        check_call(cmd, shell=True)
+
+
+if __name__ == '__main__':
+    shots = [int(arg) for arg in sys.argv[1:]]
+    for shot in shots:
+        try:
+            pd_list = proc.proc_shot(shot)
+            del_current_data(shot)
+            if pd_list is not None:
+                proc.mds_save_shot(shot, pd_list)
+        except Exception, ex:
+            print('Failed to process shot:', shot)
+            print('Exception:', ex)

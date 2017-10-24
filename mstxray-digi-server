@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+import mstxray.digitizer as digi
+
+if __name__ == '__main__':
+    digi.serve()

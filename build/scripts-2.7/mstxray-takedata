@@ -1,0 +1,421 @@
+#!/opt/bin/python
+# coding=UTF-8
+from __future__ import division, print_function 
+import os
+import time
+import cPickle
+import threading
+import subprocess
+import pylab
+pylab.rcParams['text.usetex'] = True
+
+import tui
+
+from mstxray import mpl as mstmpl
+from mstxray import physical as mp
+from mstxray import rawdata
+from mst import mdsplus as mds
+
+from mstxray import digitizer
+
+# Some globals. 
+SAMPLE_TIME = 75       # Sampling time in milliseconds. 
+ZERO_LEVEL  = 16384    # The zero level on the digitizer. 
+DT          = 1/(60e6) # The time step.
+
+# The T0 time is set by the trigger. Unfortunately, this data isn't available
+# from MDSplus when we are storing data, so it has to be hard-coded. 
+T0 = -0.002
+
+# Get all the detectors, ports, apertures, and filters that are in use. 
+DETECTORS = mp.XRayDetector.get_all(in_use=True)
+PORTS     = mp.Port.get_all(in_use=True)
+APERTURES = mp.XRayAperture.get_all(in_use=True)
+FILTERS   = mp.XRayFilter.get_all(in_use=True)
+
+SAVE_PATH = os.path.expanduser('~/.mstXRayTakeData')
+
+
+class DetectorConfig:
+    detector = None
+    enabled  = None
+    port     = None
+    aperture = None
+    filter   = None
+
+CONFIG = []
+
+# Initialize the configuration
+for det in DETECTORS:
+    dc = DetectorConfig()
+    dc.detector = det
+    dc.enabled = False
+    dc.port = None
+    dc.aperture = None
+    dc.filter = None
+    CONFIG.append(dc)
+
+# Sort the configuration.
+def dc_cmp(dc1, dc2):
+    return cmp(dc1.detector.name, dc2.detector.name)
+
+CONFIG.sort(cmp=dc_cmp)
+
+
+def save_config():
+    save_data = {}
+    save_data['sampleTime'] = SAMPLE_TIME
+    save_data['zeroLevel'] = ZERO_LEVEL
+    save_data['detectorConfigs'] = []
+    for dc in CONFIG:
+        portSN = None if dc.port is None else dc.port.sn
+        apSN = None if dc.aperture is None else dc.aperture.sn
+        filtSN = None if dc.filter is None else dc.filter.sn
+
+        save_data['detectorConfigs'].append([dc.detector.sn, dc.enabled, 
+                                            portSN, apSN, filtSN])
+    with open(SAVE_PATH, 'w') as f:
+        cPickle.dump(save_data, f)
+
+
+def load_config():
+    # Map from detector serial number to DetectorConfig object.
+    global SAMPLE_TIME, ZERO_LEVEL
+
+    dcMap = {}
+    for dc in CONFIG:
+        dcMap[dc.detector.sn] = dc
+        
+    if not os.path.exists(SAVE_PATH):
+        print('Configuration file not found. Skipping.')
+        return
+    
+    # We only load the setting for a detector if it's currently in use. 
+    with open(SAVE_PATH, 'rb') as f:
+        save_data = cPickle.load(f)
+        try:
+            SAMPLE_TIME = save_data['sampleTime']
+        except:
+            print('Failed to load sample time.')
+            SAMPLE_TIME = 60
+        try:
+            ZERO_LEVEL  = save_data['zeroLevel']
+        except:
+            print('Failed to load zero level.')
+            ZERO_LEVEL = 8192
+        
+        for saveRow in save_data['detectorConfigs']:
+            detSN, enabled, portSN, apSN, filtSN = saveRow
+
+            port = None if portSN is None else mp.Port.get(portSN)
+            ap = None if apSN is None else mp.XRayAperture.get(apSN)
+            filt = None if filtSN is None else mp.XRayFilter.get(filtSN)
+            if detSN in dcMap.keys():
+                dc = dcMap[detSN]
+                dc.enabled = enabled
+                dc.port = port
+                dc.aperture = ap
+                dc.filter = filt
+
+
+def print_config(config=None):
+    if config is None:
+        config = CONFIG
+    rows = [['Row', 'Detector', 'Enabled', 'Port', 'Aperture', 'Filter']]
+    for i, dc in enumerate(config):
+        sE = str(dc.enabled)
+        sP = 'None' if dc.port is None else dc.port.name
+        sA = 'None' if dc.aperture is None else dc.aperture.name
+        sF = 'None' if dc.filter is None else dc.filter.name
+        rows.append([str(i), dc.detector.name, sE, sP, sA, sF])
+    tui.table(rows)
+
+
+def _get_thing(name, things, cancelVal=None):
+    items = [[str(i), thing.name, thing] for i, thing in enumerate(things)]
+    items.append(['n', 'None', None])
+    items.append(['c', 'Cancel', cancelVal])
+    return tui.menu('Select {0}'.format(name), items)
+    
+
+def get_port(cancelVal=None):
+    return _get_thing('Port', PORTS, cancelVal)
+
+
+def get_aperture(cancelVal=None):
+    return _get_thing('Aperture', APERTURES, cancelVal)
+
+
+def get_filter(cancelVal=None):
+    return _get_thing('Filter', FILTERS, cancelVal)
+    
+
+def edit_row(row):    
+    dc = CONFIG[row]
+    while 1:
+        sE = str(dc.enabled)
+        sP = None if dc.port is None else dc.port.name
+        sA = None if dc.aperture is None else dc.aperture.name
+        sF = None if dc.filter is None else dc.filter.name
+        items = (('e', 'Enabled:  {0}'.format(sE), 'e'),
+                 ('p', 'Port:     {0}'.format(sP), 'p'),
+                 ('a', 'Aperture: {0}'.format(sA), 'a'),
+                 ('f', 'Filter:   {0}'.format(sF), 'f'),
+                 ('d', 'Done',                     'd'))
+        
+        s = tui.menu('{0} Configuration'.format(dc.detector.name), items)
+        if s == 'e':
+            dc.enabled = not dc.enabled
+        elif s == 'p':
+            dc.port = get_port(dc.port)
+        elif s == 'a':
+            dc.aperture = get_aperture(dc.aperture)
+        elif s == 'f':
+            dc.filter = get_filter(dc.filter)
+        elif s == 'd':
+            return
+
+
+def edit_rows(rowNums):
+    config = []
+    for i in rowNums:
+        config.append(CONFIG[i])
+    while 1:
+        print_config(config)
+        s = tui.menu('Edit Rows', (
+                ('e', 'Enable',   'e'),
+                ('a', 'Aperture', 'a'),
+                ('f', 'Filter',   'f'),
+                ('d', 'Done',     'd')))
+        if s == 'e':
+            enabled = tui.get_yes_no('Enable detectors?')
+            for dc in config:
+                dc.enabled = enabled
+        elif s == 'a':
+            aperture = get_aperture()
+            for dc in config:
+                dc.aperture = aperture
+        elif s == 'f':
+            filter = get_filter()
+            for dc in config:
+                dc.filter = filter
+        elif s == 'd':
+            return 
+
+
+def main_menu():
+    global SAMPLE_TIME
+    global ZERO_LEVEL
+
+    num_rows = len(CONFIG)
+
+    while 1:
+        #tui.clear()
+        print_config()
+        s = tui.menu('Main', (
+                ('p', 'Print configuration',                     'p'),
+                ('P', 'Plot configuration',                      'P'),
+                ('e', 'Edit row',                                'e'),
+                ('E', 'Edit multiple rows',                      'E'),
+                ('s', 'Sample time: {0} ms'.format(SAMPLE_TIME), 's'),
+                ('z', 'Zero level: {0}'.format(ZERO_LEVEL),      'z'),
+                ('t', 'Take data loop',                          't'),
+                ('T', 'Take calibration data',                   'T'),
+                ('q', 'Quit',                                    'q')
+                ))
+
+        if s == 'P':
+            plot_config()
+
+        elif s == 'e':
+            i = tui.get_int('Row number', min_=0, max_=num_rows - 1)
+            edit_row(i)
+
+        elif s == 'E':
+            rows = tui.get_ints('Row numbers', min_=0, max_=num_rows - 1)
+            edit_rows(rows)
+
+        elif s == 's':
+            SAMPLE_TIME = tui.get_int('Sample (ms)', SAMPLE_TIME, 1, 100)
+                
+        elif s == 'z':
+            ZERO_LEVEL = tui.get_int('Zero level', ZERO_LEVEL, 0, 2**16)
+
+        elif s == 't':
+            take_data()
+            
+        elif s == 'T':
+            take_calibration_data()
+
+        elif s == 'q':
+            break;
+
+
+def plot_config():
+    global CONFIG
+    if os.fork() == 0:
+        os.setsid()
+        os.umask(0)
+
+        # Plot the poloidal cross-section.
+        ax = pylab.gca()
+        ports = mp.Port.get_all(in_use=True)
+        mstmpl.plot_poloidal_cross_section(ax, ports=ports)
+        
+        # Loop through each config and plot.
+        for dc in CONFIG:
+            if dc.port is None:
+                continue
+            
+            if not dc.enabled:
+                continue
+
+            mstmpl.plot_port(ax, dc.port, outer_shell=False, 
+                             inner_shell=False, exit_point=False,
+                             impact_point=False)
+
+            standoff = 0
+            if dc.filter is not None:
+                mstmpl.plot_filter(ax, dc.filter, dc.port, standoff)
+                standoff += dc.filter.tubeLen
+            
+            if dc.aperture is not None:
+                mstmpl.plot_aperture(ax, dc.aperture, dc.port, standoff)
+                standoff += dc.aperture.tubeLen
+                
+            if dc.detector is not None:
+                mstmpl.plot_detector(ax, dc.detector, dc.port, standoff)
+        
+        pylab.show()
+        os._exit(0)
+
+def take_calibration_data():
+    detSN = tui.get_int('Detector serial number')
+    numShots = tui.get_int('Number of shots')
+    
+    detector = mp.XRayDetector.get(detSN)
+    digi = digitizer.get_client()
+
+    print('\nZeroing digitizer.')
+    digi.zero(value=ZERO_LEVEL)
+    
+    for i in range(numShots):
+        print('Taking data: {0}'.format(i))
+        
+        # Maximum number of samples. 
+        digi.arm(2**24 - 3)
+        digi.trigger()
+        
+        # Wait for data to be collected. 
+        time.sleep(0.4)
+
+        print('Saving data.')
+
+        timestamp = time.time()
+
+        shot = rawdata.get_next_shot()
+        data = rawdata.RawData(detector, shot)
+        data.dt = DT
+        data.t0 = 0
+        data.timestamp = timestamp
+        data.y = digi.get_data(detector.digiCard, detector.digiChan)
+
+        rawdata.save((data,))
+
+
+                
+
+def take_data():
+    print('Saving configuration.')
+    save_config()
+    
+    print('Starting thread.')
+    runEvt = threading.Event()
+    runEvt.set()
+    thread = threading.Thread(target=take_data_loop, args=(runEvt,))
+    thread.start()
+
+    while 1:
+        s = tui.get_string("Enter 'q' to stop")
+        if s == 'q':
+            runEvt.clear()
+            print('Waiting for thread to stop.')
+            thread.join()
+            break;
+
+
+def take_data_loop(runEvt):
+    # Initialize the digitizer.
+    digi = digitizer.get_client()
+
+    # Zero digitizer.
+    print('\nZeroing digitizer.')
+    digi.zero(value=ZERO_LEVEL)
+
+    while 1:
+        # Arm the digitizer.
+        digi.arm(int((SAMPLE_TIME + 2) * 1e-3 * 60e6))
+
+        # Wait for the next shot (or stop event).
+        shot = mds.current_shot()
+
+        print('Waiting for shot (currently: {0}).'.format(shot))
+        print("Enter 'q' to stop:")
+
+        while 1:
+            
+            current_shot = mds.current_shot()
+            
+            if current_shot != shot:
+                shot = current_shot
+                break;
+            
+            if not runEvt.is_set():
+                break;
+            
+            time.sleep(5)
+            
+        # Check if we should stop running.
+        if not runEvt.is_set():
+            print('Thread stopping.')
+            return
+
+        # Collect data.
+        save_data(digi, shot)
+        
+        # Spawn a process to fit the data. 
+        cmd = 'mstxray-fitshot ' + str(shot)
+        subprocess.Popen(cmd, shell=True)
+
+
+def save_data(digi, shot):
+    print('Saving data for shot {0}.'.format(shot))
+    timestamp = time.time()
+    
+    # Sleep to wait for all data. It could rarely occur that we get here
+    # before all the data is read into the digitizer. If we sleep for 
+    # half a second, we are assured that we have all the data, because the 
+    # card can't take more data than that (at least at our sample rate). 
+    time.sleep(5)
+    data_list = []
+
+    for dc in CONFIG:
+        if dc.enabled:
+            print('Fetching data for detector {0}'.format(dc.detector.name))
+            data = rawdata.RawData(dc.detector, shot)
+            data.port = dc.port
+            data.filter = dc.filter
+            data.aperture = dc.aperture
+            data.dt = DT
+            data.t0 = T0
+            data.timestamp = timestamp
+            data.y = digi.get_data(dc.detector.digiCard, dc.detector.digiChan)
+            data_list.append(data)
+
+    rawdata.save(data_list)
+
+
+if __name__ == '__main__':
+    load_config()
+    main_menu()
+    save_config()

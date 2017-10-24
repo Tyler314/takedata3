@@ -1,0 +1,785 @@
+#!/usr/bin/env python
+from __future__ import division, print_function
+import time
+import Tkinter as tk
+import tkMessageBox
+import tkSimpleDialog
+import ttk
+import tktoolbox as tkt
+import threading
+import os
+import sys
+import numpy as np
+import mstxray.dbutil as dbutil # For testing purposes.
+import mstxray.constants as const # For testing purposes.
+
+from mstxray import digitizer
+from mstxray import mpl as mstmpl
+from mstxray import physical as mp
+from mstxray import rawdata
+from mst import mdsplus as mds
+
+ZERO_LEVEL  = 4096     # The zero level on the digitizer.
+DT          = 1/(60e6) # The time step.
+
+# The T0 time is set by the trigger. Unfortunately, this data isn't available
+# from MDSplus when we are storing data, so it has to be hard-coded.
+T0 = -0.002
+
+class App(object):
+    def __init__(self):
+        def key(p):
+            return p.impact_param()
+
+        self._ports = sorted(mp.Port.get_all(in_use=True), key=key)
+        self._getData_thread = None
+        self._td_thread = None
+        self._stop_evt = threading.Event()
+
+        # Combo boxes for each port.
+        self._combo_filt = {}
+        self._combo_aper = {}
+        self._combo_det  = {}
+        self._combo_shaping_time = {}
+        self._combo_gain = {}
+        self._combo_physical_ports = {}
+
+        # Store Detectors & Physical Ports, previously selected from the GUI. Mapping: Channel Number (Int) -> Drop Down Box Selection (DBObject)
+        self._prev_detectors = {}
+        self._prev_physical_ports = {}
+        # Store the data for each of the channels, keys correspond to channel numbers
+        self._channelData = {}
+
+        # Create sets to keep track of the Detectors & Physical Ports chosen by the user.
+        # Objects stored in these sets will be removed from the drop boxes in the GUI.
+        self._selected_detectors      = set()
+        self._selected_physical_ports = set()
+
+        self._filt_map = {}
+
+        # Used to store the shaping times and gains associated which each detector from last run
+        self._dets_st_gain = {}
+
+        for filt in mp.XRayFilter.get_all(in_use=True):
+            self._filt_map[str(filt)] = filt
+        self._filt_map[''] = None
+
+        self._aper_map = {}
+        for aper in mp.XRayAperture.get_all(in_use=True):
+            self._aper_map[str(aper)] = aper
+        self._aper_map[''] = None
+
+        self._det_map = {}
+        for det in mp.XRayDetector.get_all(in_use=True):
+            self._det_map[str(det)] = det
+        self._det_map[''] = None
+
+        # Store mapping from: port -> (filter, aperture, detector) objects for
+        # use by the thread.
+        self._filt_aper_det_map = {}
+
+        #######################################################################
+        # Construct GUI
+        #######################################################################
+        self._master = tk.Tk()
+        self._master.title('X-Ray Take Data')
+
+        #######################################################################
+        # Two panes, one for buttons, one for tabs.
+        #######################################################################
+        panes = tk.PanedWindow(master=self._master, orient=tk.HORIZONTAL,
+                               width=800, height=600)
+        panes.pack(fill=tk.BOTH, expand=1)
+
+        #######################################################################
+        # Button frame.
+        #######################################################################
+        frame = tk.Frame(panes)
+        frame.pack(fill=tk.BOTH, expand=1)
+        panes.add(frame, width=150)
+        row = 0
+        label = tk.Label(frame, text='Sample time [ms]:', underline=1)
+        label.grid(row=row, column=0, sticky=tk.W)
+
+        self._entry_time = tk.Entry(frame)
+        self._entry_time.grid(row=row, column=1, sticky=tk.EW)
+
+        row += 1
+        btn = tk.Button(frame, text='Save', underline=0, command=self._save)
+        btn.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+
+        row += 1
+        btn = tk.Button(frame, text='Calib Shots', underline=0,
+                        command=self._take_calib_data)
+        btn.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+
+        row += 1
+        btn = tk.Button(frame, text='Plot', underline=0, command=self._plot)
+        btn.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+
+        row += 1
+        self._btn_run = tk.Button(frame,
+                                  text='Run',
+                                  underline=0,
+                                  command=self._td_run)
+        self._btn_run.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+
+        row += 1
+        self._btn_stop = tk.Button(frame,
+                                   text='Stop',
+                                   underline=1,
+                                   command=self._td_stop,
+                                   state=tk.DISABLED)
+        self._btn_stop.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+
+        row += 1
+        self._btn_stop = tk.Button(frame,
+                                   text='Clear',
+                                   underline=1,
+                                   command=self._clear)
+        self._btn_stop.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+
+        frame.columnconfigure(0, weight=0)
+        frame.columnconfigure(1, weight=1)
+
+        #######################################################################
+        # Notebook.
+        #######################################################################
+        notebook = ttk.Notebook(panes)
+        notebook.pack(fill=tk.BOTH, expand=1)
+        panes.add(notebook)
+
+        #######################################################################
+        # Build input array.
+        #######################################################################
+        # Labels.
+        frame = tk.Frame(notebook)
+        frame.pack(fill=tk.BOTH, expand=1)
+        notebook.add(frame, text='Detectors')
+
+        self.frame = frame
+        kwargs = {'row':0, 'sticky':tk.W }
+        tk.Label(self.frame, text='Channels'      ).grid(column=0, **kwargs)
+        tk.Label(self.frame, text='Detector'      ).grid(column=1, **kwargs)
+        tk.Label(self.frame, text='Physical Ports').grid(column=2, **kwargs)
+        tk.Label(self.frame, text='Shaping Time'  ).grid(column=3, **kwargs)
+        tk.Label(self.frame, text='Gain'          ).grid(column=4, **kwargs)
+        tk.Label(self.frame, text='Aperture'      ).grid(column=5, **kwargs)
+        tk.Label(self.frame, text='Filter'        ).grid(column=6, **kwargs)
+
+        # TODO
+        # Testing getting drop-down info from thesqlite3 database.
+        query = 'SELECT * FROM '
+
+        # Create drop-down boxes for all the rows
+        self._detector_boxes     = [''] + mp.XRayDetector.get_all(in_use=True)
+        self._port_boxes         = [''] + self._ports
+        self._shaping_time_boxes = ['', '20 ns', '25 ns', '100 ns', '500 ns', '2000 ns']
+        self._gain_boxes         = ['', '1', '10', '100']
+        self._aperature_boxes    = [''] + mp.XRayAperture.get_all(in_use=True)
+        self._filter_boxes       = [''] + mp.XRayFilter.get_all(in_use=True)
+
+        # Dictionary of dictionaries, allows for a consistant lookup of comboboxes as
+        # they change over time.
+        self._combo_map_master = {'filt':{}, 'aper':{}, 'det':{}, 'shaping_time':{}, 'gain':{}, 'physical_ports':{}}
+        for box in self._filter_boxes:
+            self._combo_map_master['filt'][str(box)] = box
+        for box in self._aperature_boxes:
+            self._combo_map_master['aper'][str(box)] = box
+        for box in self._detector_boxes:
+            self._combo_map_master['det'][str(box)] = box
+        for box in self._shaping_time_boxes:
+            self._combo_map_master['shaping_time'][str(box)] = box
+        for box in self._gain_boxes:
+            self._combo_map_master['gain'][str(box)] = box
+        for box in self._port_boxes:
+            self._combo_map_master['physical_ports'][str(box)] = box
+
+        # ADD MORE COLUMNS TO GUI HERE.
+        for row, chan in enumerate(range(16, 0, -1)):
+            label = tk.Label(self.frame, text=str(chan))
+            label.grid(row=row+1, column=0, sticky=tk.W)
+
+            # DETECTORS
+            combo = ttk.Combobox(self.frame, state='readonly')
+            combo['values'] = self._detector_boxes
+            # Call the self._updateShapingTimeAndDetectors method everytime a new value is selected in the Detector column of the GUI
+            combo.bind('<<ComboboxSelected>>', self._updateShapingTimeAndDetectors)
+            combo.grid(row=row+1, column=1, sticky=tk.EW)
+            self._combo_det[chan] = combo
+
+            # PHYSICAL PORTS
+            combo = ttk.Combobox(self.frame, state='readonly')
+            combo['values'] = self._port_boxes
+            combo.bind('<<ComboboxSelected>>', self._updatePhysicalPorts)
+            combo.grid(row=row+1, column=2, sticky=tk.EW)
+            self._combo_physical_ports[chan] = combo
+
+            # SHAPING TIME
+            combo = ttk.Combobox(self.frame, state='readonly')
+            combo['values'] = self._shaping_time_boxes 
+            combo.grid(row=row+1, column=3, sticky=tk.EW)
+            self._combo_shaping_time[chan] = combo
+
+            # GAIN
+            combo = ttk.Combobox(self.frame, state='readonly')
+            combo['values'] = self._gain_boxes
+            combo.grid(row=row+1, column=4, sticky=tk.EW)
+            self._combo_gain[chan] = combo
+
+            # APERTURE
+            combo = ttk.Combobox(self.frame, state='readonly')
+            combo['values'] = self._aperature_boxes
+            combo.grid(row=row+1, column=5, sticky=tk.EW)
+            self._combo_aper[chan] = combo
+
+            # FILTER
+            combo = ttk.Combobox(self.frame, state='readonly')
+            combo['values'] = self._filter_boxes
+            combo.grid(row=row+1, column=6, sticky=tk.EW)
+            self._combo_filt[chan] = combo
+
+            # Populate the current selected values for the Detectors & Physical Ports
+            self._prev_detectors[chan]      = self._combo_det[chan].get()
+            self._prev_physical_ports[chan] = self._combo_physical_ports[chan].get()
+        
+        # Make combo boxes expand with the window.
+        frame.columnconfigure(0, weight=0)
+        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=1)
+        frame.columnconfigure(3, weight=1)
+        frame.columnconfigure(4, weight=1)
+        frame.columnconfigure(5, weight=1)
+        frame.columnconfigure(6, weight=1)
+
+        # Set all combo items to the empty value.
+        for chan in range(16,0,-1):
+            self._combo_shaping_time[chan].current(newindex=0)
+            self._combo_filt[chan].current(newindex=0)
+            self._combo_aper[chan].current(newindex=0)
+            self._combo_det [chan].current(newindex=0)
+            self._combo_physical_ports[chan].current(newindex=0)
+            self._combo_gain[chan].current(newindex=2)
+
+        #######################################################################
+        # Configuration diagram.
+        #######################################################################
+        self._mpl_diagram = tkt.MPLFrame(notebook)
+        notebook.add(self._mpl_diagram, text='Diagram')
+
+        self._load()
+        # Update the Shaping Time & Detector Combo boxes, so they reflect the loaded
+        # data when self._load() was called.
+        self._updateShapingTimeAndDetectors()
+        # Create thread for the self._getData3 method, so the user doesn't have to wait
+        # to use the GUI while the method runs.
+        self._getData_thread = threading.Thread(target=self._getData3)
+        # Allows user to quit program even if the thread isn't done running
+        self._getData_thread.daemon = True
+        # Start running the thread
+        self._getData_thread.start()
+
+    def _updateShapingTimeAndDetectors(self, derp = 'derp'):
+        """Update the Sample Time column of the GUI according to the box selected in the Detector column.
+        Also keeps track of which Detectors are chosen by the user in the GUI, and removes the selected
+        detector from the drop-down box of all the other detector drop-down boxes.
+        ComboboxSelected method requires an argument for some reason, but this particular method has no use
+        for one; argument 'derp' is set to the string 'derp' and is never used, just ignore it."""
+        # Keep track of the channels that need their physical ports, gains, and shaping times chnaged from a blank
+        channels2update = set()
+        for row, chan in enumerate(range(16,0,-1)):
+            try:
+                curr_sn = self._combo_det[chan].get()[0:2]
+            except:
+                continue
+            # Check if specific channel was changed by the user in the GUI, loop to next channel if it's the same
+            if self._prev_detectors[chan] == self._combo_det[chan].get():
+                continue
+            channels2update.add(chan)
+            # Add detector which user chose from drop box to set of chosen detectors
+            self._selected_detectors.add(self._combo_det[chan].get())
+            # Remove the old one
+            if self._prev_detectors[chan] in self._selected_detectors:
+                self._selected_detectors.remove(self._prev_detectors[chan])
+            # Update the chosen value
+            self._prev_detectors[chan] = self._combo_det[chan].get()
+            # Repopulate the Sample Time boxes that have newly updated corresponding Detectors updated
+            if curr_sn == "HX":
+                self._combo_shaping_time[chan]["values"] = ["2000 ns"]
+            elif curr_sn == "FX":
+                self._combo_shaping_time[chan]["values"] = ["20 ns"]
+            else:
+                self._combo_shaping_time[chan]["values"] = ["", "20 ns", "25 ns", "100 ns", "500 ns", "2000 ns"]
+            self._combo_shaping_time[chan].current(newindex=0)
+
+        # Update all of the Detector combo boxes such that there are no repeats
+        columns2update = [self._combo_physical_ports, self._combo_gain, self._combo_shaping_time]
+        for chan in range(1,17):
+            portsExcluded = self._selected_detectors - {self._combo_det[chan].get()} - {''}
+            self._combo_det[chan]['values'] = [box for box in self._detector_boxes if str(box) not in portsExcluded]
+            for comboBox in columns2update:
+                # Check current channel needs their columns updated
+                if chan in channels2update:
+                    # Remove the blank option from the drop down
+                    if '' in comboBox[chan]['values']:
+                        derp = []
+                        for i in comboBox[chan]['values']:
+                            if i != '':
+                                derp.append(i)
+                        # Reset the combo box to be without a blank option
+                        comboBox[chan]['values'] = tuple(derp) if type(comboBox[chan]['values']) != list else derp
+                    if self._load_prev_detector_info(chan, self._combo_det[chan].get()):
+                        continue
+                    # If the user hasn't chosen an option yet (i.e. current value in blank)
+                    # then set it to first choice.
+                    elif comboBox[chan].get() == '':
+                        comboBox[chan].current(newindex=0)
+                        if comboBox is self._combo_physical_ports:
+                            self._updatePhysicalPorts(chan)
+    
+    def _updatePhysicalPorts(self, updateChannel = 0):
+        """Keeps track of which Physical Ports are chosen by the user in the GUI, and removes the selected
+        Physical Port from the drop-down box of all the other Physical Port drop-down boxes.
+        ComboboxSelected method requires an argument for some reason, but this particular method has no use
+        for one; argument 'derp' is set to the string 'derp' and is never used, just ignore it."""
+        for chan in range(1,17):
+            # Skip this physical port if the user didn't update it
+            if self._prev_physical_ports[chan] == self._combo_physical_ports[chan].get():
+                continue
+            # Add physical port which user chose from drop box to set of chosen physical ports
+            self._selected_physical_ports.add(self._combo_physical_ports[chan].get())
+            # Remove the previousily chosen physical port from the set of selected physical ports
+            if self._prev_physical_ports[chan] in self._selected_physical_ports:
+                self._selected_physical_ports.remove(self._prev_physical_ports[chan])
+            # Update the chosen value
+            self._prev_physical_ports[chan] = self._combo_physical_ports[chan].get()
+
+        # Update all of the Physical Port combo boxes such that there are no repeats.
+        for chan in range(1,17):
+            if updateChannel == chan:
+                toRemove = {self._combo_physical_ports[chan].get()}
+                toRemove.add('')
+                portsExcluded = self._selected_physical_ports - toRemove
+            else:
+                portsExcluded = self._selected_physical_ports - {self._combo_physical_ports[chan].get()} - {''}
+            self._combo_physical_ports[chan]['values'] = [box for box in self._port_boxes if str(box) not in portsExcluded]
+                
+
+    def _load_prev_detector_info(self, chan, det):
+        if self._dets_st_gain and det in self._dets_st_gain.keys():
+            st_gain = self._dets_st_gain[det]
+            self._combo_shaping_time[chan].set(value=self._combo_map_master['shaping_time'][st_gain[0]])
+            self._combo_gain[chan].set(value=self._combo_map_master['gain'][st_gain[1]])
+            return True
+        else:
+            return False
+
+    def _clear(self):
+        for chan in range(1,17):
+            self._combo_shaping_time[chan]['values'] = self._shaping_time_boxes
+            self._combo_filt[chan]['values'] = self._filter_boxes
+            self._combo_aper[chan]['values'] = self._aperature_boxes
+            self._combo_det [chan]['values'] = self._detector_boxes
+            self._combo_physical_ports[chan]['values'] = self._port_boxes
+            self._combo_gain[chan]['values'] = self._gain_boxes
+
+            self._combo_shaping_time[chan].current(newindex=0)
+            self._combo_filt[chan].current(newindex=0)
+            self._combo_aper[chan].current(newindex=0)
+            self._combo_det [chan].current(newindex=0)
+            self._combo_physical_ports[chan].current(newindex=0)
+            self._combo_gain[chan].current(newindex=2)
+
+    def _get_filt(self, chan):
+        try:
+            return self._filt_map[self._combo_filt[chan].get()]
+        except:
+            return None
+
+
+    def _get_aper(self, chan):
+        try:
+            return self._aper_map[self._combo_aper[chan].get()]
+        except:
+            return None
+
+
+    def _get_det(self, chan):
+        try:
+            return self._det_map[self._combo_det[chan].get()]
+        except:
+            return None
+
+
+    def _get_sample_time(self):
+        try:
+            return int(self._entry_time.get())
+        except:
+            return None
+
+    # New accessor methods for takedata3.
+    # To get physical ports, shaping time, and gain.
+    def _get_physcial_ports(self, chan):
+        try:
+            return self._combo_physical_ports[chan].get()
+        except:
+            return None
+
+    def _get_shaping_time(self, chan):
+        try:
+            return self._combo_shaping_time[chan].get()
+        except:
+            return None
+
+    def _get_gain(self, chan):
+        try:
+            return self._combo_gain[chan].get()
+        except:
+            return None
+
+    def run(self):
+        self._master.mainloop()
+
+# TODO
+    def _save(self):
+        save_data = {}
+        save_data['sample_time'] = self._get_sample_time()
+        for chan in range(16,0,-1):
+            d = {}
+            d['filt']           = self._combo_filt[chan].get()
+            d['aper']           = self._combo_aper[chan].get()
+            d['det' ]           = self._combo_det [chan].get()
+            d['shaping_time']   = self._combo_shaping_time[chan].get()
+            d['gain']           = self._combo_gain[chan].get()
+            d['physical_ports'] = self._combo_physical_ports[chan].get()
+            save_data[chan]  = d
+
+        tkt.io.dump('mstxray-takedata3',
+                    save_data=save_data,
+                    mpl_diagram=self._mpl_diagram.get_settings())
+
+        self._save_detectors_st_gain()
+
+    def _save_detectors_st_gain(self):
+        save_data = {}
+        for chan in range(1,17):
+            if self._combo_gain[chan].get() or self._combo_shaping_time[chan].get():
+                save_data[self._combo_det[chan].get()] = (self._combo_shaping_time[chan].get(), self._combo_gain[chan].get())
+
+        tkt.io.dump('mstxray-takedata3_detector_st_gain', save_data=save_data) #, mpl_diagram=self._mpl_diagram.get_settings())
+
+    def _load(self):
+        save_data, mpl_diagram = tkt.io.load('mstxray-takedata3',
+                                             'save_data',
+                                             'mpl_diagram')
+        try:
+            # Clear buffer and set default value to be 60
+            self._entry_time.delete(0, tk.END)
+            sample_time = str(save_data['sample_time'])
+            self._entry_time.insert(0, sample_time)
+        except:
+            # If cannot load previous value of the sample time, load 60
+            self._entry_time.insert(0, '60')
+            print('    Failed to load sample time.')
+
+        for chan in range(16,0,-1):
+            print('Loading data for channel:', chan)
+            if save_data is None or chan not in save_data:
+                print('    No data found.')
+                continue
+
+            try:
+                newValue = self._combo_map_master['filt'][save_data[chan]['filt']]
+                self._combo_filt[chan].set(value=newValue)
+            except:
+                print('    Failed to load filter.')
+
+            try:
+                newValue = self._combo_map_master['aper'][save_data[chan]['aper']]
+                self._combo_aper[chan].set(value=newValue)
+            except:
+                print('    Failed to load aperture.')
+
+            try:
+                newValue = self._combo_map_master['det'][save_data[chan]['det']]
+                self._combo_det[chan].set(value=newValue)
+            except:
+                print('    Failed to load detector.')
+
+            try:
+                newValue = self._combo_map_master['shaping_time'][save_data[chan]['shaping_time']]
+                self._combo_shaping_time[chan].set(value=newValue)
+            except:
+                print('    Failed to load shaping time.')
+
+            try:
+                newValue = self._combo_map_master['gain'][save_data[chan]['gain']]
+                self._combo_gain[chan].set(value=newValue)
+            except:
+                print('    Failed to load gain.')
+
+            try:
+                newValue = self._combo_map_master['physical_ports'][save_data[chan]['physical_ports']]
+                self._combo_physical_ports[chan].set(value=newValue)
+            except:
+                print('    Failed to load physical ports.')
+
+        if mpl_diagram is not None:
+            self._mpl_diagram.load_settings(mpl_diagram)
+
+        # Load the shaping times and gains associated which each detector from last run
+        self._dets_st_gain = tkt.io.load('mstxray-takedata3_detector_st_gain', 'save_data')[0]
+
+    def _td_run(self):
+        print('Saving configuration.')
+        self._save()
+
+        # Store config for thread.
+        self._filt_aper_det_map = {}
+        self._physPorts_shapingTime_gain_map = {}
+        for chan in range(16,0,-1):
+            filt = self._get_filt(chan)
+            aper = self._get_aper(chan)
+            det  = self._get_det (chan)
+            self._filt_aper_det_map[chan] = (filt, aper, det)
+            # New for takedata3
+            physPort    = self._get_physical_ports(chan)
+            shapingTime = self._get_shaping_time(chan)
+            gain        = self._get_gain(chan)
+            self._physPorts_shapingTime_gain_map[chan] = (physPort, shapingTime, gain)
+
+        if self._get_sample_time() is None or self._get_sample_time() < 1:
+            tkMessageBox.showerror('Error', 'Sample time is incorrect.')
+            return
+
+        print('Starting thread.')
+        self._td_thread = threading.Thread(target=self._td_loop,
+                                           args=(self._get_sample_time(),))
+        self._stop_evt.clear()
+        self._td_thread.start()
+
+        for chan in range(16,-1,0):
+            self._combo_filt[chan]['state'] = 'disabled'
+            self._combo_aper[chan]['state'] = 'disabled'
+            self._combo_det [chan]['state'] = 'disabled'
+            self._combo_shaping_time[chan]['state'] = 'disabled'
+            self._combo_gain[chan]['state'] = 'disabled'
+            self._combo_physical_ports[chan]['state'] = 'disabled'
+
+        self._btn_run   ['state'] = tk.DISABLED
+        self._entry_time['state'] = tk.DISABLED
+        self._btn_stop  ['state'] = tk.NORMAL
+
+
+    def _td_stop(self):
+        print('Waiting for thread to stop.')
+        self._stop_evt.set()
+        self._td_thread.join()
+
+        self._btn_stop  ['state'] = tk.DISABLED
+        self._btn_run   ['state'] = tk.NORMAL
+        self._entry_time['state'] = tk.NORMAL
+
+        for chan in range(16,0,-1):
+            self._combo_filt[chan]['state'] = 'readonly'
+            self._combo_aper[chan]['state'] = 'readonly'
+            self._combo_det [chan]['state'] = 'readonly'
+            self._combo_shaping_time[chan]['state'] = 'readonly'
+            self._combo_gain[chan]['state'] = 'readonly'
+            self._combo_physical_ports[chan]['state'] = 'readonly'
+
+
+    def _td_loop(self, sample_time):
+        # digi = digitizer.get_client()
+
+        # print('\nZeroing digitizer.')
+        # digi.zero(value=ZERO_LEVEL)
+
+        while 1:
+            # print('Arming digitizer.')
+            # digi.arm(int((sample_time + 2) * 1e-3 * 60e6))
+
+            # Wait for the next shot (or stop event).
+            shot = mds.current_shot()
+
+            print('Waiting for shot (currently: {0}).'.format(shot))
+            while 1:
+
+                current_shot = mds.current_shot()
+
+                if current_shot != shot:
+                    shot = current_shot
+                    break
+
+                if self._stop_evt.is_set():
+                    break
+
+                time.sleep(5)
+
+            # Check if we should stop running.
+            if self._stop_evt.is_set():
+                print('Thread stopping.')
+                return
+
+            # Collect data.
+            self._save_data(shot) # digi, shot)
+
+
+    def _save_data(self, shot): #  digi, shot):
+        print('Saving data for shot {0}.'.format(shot))
+        timestamp = time.time()
+
+        # Sleep to wait for all data. It could rarely occur that we get here
+        # before all the data is read into the digitizer. If we sleep for
+        # half a second, we are assured that we have all the data, because the
+        # card can't take more data than that (at least at our sample rate).
+        time.sleep(5)
+        data_list = []
+
+        for chan in range(16,0,-1):
+            filt, aper, det = self._filt_aper_det_map[chan]
+            # New to takedata3.
+            physPort, shapingTime, gain = self._physPorts_shapingTime_gain_map[chan]
+
+            if det is None:
+                continue
+
+            data = rawdata.RawData(det, shot)
+            data.filter = filt
+            data.aperture = aper
+            data.dt = DT
+            data.t0 = T0
+            data.timestamp = timestamp
+            # New to takedata: physPort, shapingTime, & gain
+            data.physPort    = physPort
+            data.shapingTime = shapingTime
+            data.gain        = gain
+            # get the data of the appropriate channel, otherwise set data to None if invalid channel
+            if len(self._channelData) > channel:
+                data.y = self._channelData[channel]
+            else:
+                data.y = None
+            data_list.append(data)
+
+        rawdata.save(data_list)
+
+    def _getData3(self):
+        HEADER_LENGTH = 3
+        FILE_HEADER = 16
+
+        # Read in the .dat file
+        try:
+            data = open('3316_test_data_0.dat', 'r');
+        except:
+            print("3316_test_data_0.dat not found")
+            sys.exit(1)
+
+        # Store every 2 bytes (16 bits) into an element of the array 'f'
+        f = np.fromfile(data, dtype=np.uint16)
+        # "start" is the starting point of the current set of data points being evaluated
+        start = 10
+        # "offset" is the starting point of the header associated with the current set of
+        # data points being evaluated.
+        offset = 0
+        # Set a counter for the channels (1-based indexing)
+        current_channel = 1
+
+        # Iterate through the entire set of channels and their corresponding data points.
+        while len(f) >= offset + 11:
+            # Initialize a list to hold the data points of the desired channel
+            data_points = []
+            # Grab the lower 2 bytes of the number indicating how many samples there are for the channel
+            lowerBits = f[offset + 8]
+            # Grab the upper 2 bytes of this number
+            upperBits = f[offset + 9]
+            # Create the number
+            sample_length = 2 * (((upperBits & 0xfff) << 16) + lowerBits)
+            # Check if valid channel, if not then exit
+            if len(f) < (sample_length + start):
+                sys.exit()
+            # store the data points of this channel
+            for i in range(start, sample_length + start):
+                data_points.append(f[i])
+            # Store the data points as a numpy array, contiguous in memory
+            self._channelData[current_channel] = np.ascontiguousarray(np.asarray(data_points))
+
+            # Update the starting point of the data, the header, and the channel number
+            start += (sample_length + 10)
+            offset += (start - 10)
+            current_channel += 1
+
+    def _plot(self):
+        canvas = self._mpl_diagram.get_canvas()
+        fig = self._mpl_diagram.get_figure()
+        fig.clf()
+
+        ax = fig.gca()
+        ax.grid()
+
+        ports = self._ports
+
+        mstmpl.plot_poloidal_cross_section(ax, ports=ports)
+
+        # Loop through each detector config and plot.
+        for port in ports:
+            filt = self._get_filt(port)
+            aper = self._get_aper(port)
+            det  = self._get_det (port)
+
+            mstmpl.plot_port(ax, port, outer_shell=False,
+                             inner_shell=False, exit_point=False,
+                             impact_point=False)
+
+            if det is None:
+                continue
+
+            standoff = 0
+            if filt is not None:
+                mstmpl.plot_filter(ax, filt, port, standoff)
+                standoff += filt.tubeLen
+
+            if aper is not None:
+                mstmpl.plot_aperture(ax, aper, port, standoff)
+                standoff += aper.tubeLen
+
+            if det is not None:
+                mstmpl.plot_detector(ax, det, port, standoff)
+
+        canvas.draw()
+
+    def _take_calib_data(self):
+        detSN = tkSimpleDialog.askinteger('Detector', 'Detector serial number')
+        numShots = tkSimpleDialog.askinteger('Shots', 'Number of shots')
+
+        detector = mp.XRayDetector.get(detSN)
+        digi = digitizer.get_client()
+
+        print('\nZeroing digitizer.')
+        digi.zero(value=ZERO_LEVEL)
+
+        for i in range(numShots):
+            print('Taking data: {0}'.format(i))
+
+            # Maximum number of samples.
+            digi.arm(2**24 - 3)
+            digi.trigger()
+
+            # Wait for data to be collected.
+            time.sleep(0.4)
+
+            print('Saving data.')
+
+            timestamp = time.time()
+
+            shot = rawdata.get_next_shot()
+            data = rawdata.RawData(detector, shot)
+            data.dt = DT
+            data.t0 = 0
+            data.timestamp = timestamp
+            data.y = digi.get_data(detector.digiCard, detector.digiChan)
+
+            rawdata.save((data,))
+
+if __name__ == '__main__':
+    app = App()
+    app.run()

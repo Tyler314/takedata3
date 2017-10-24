@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+from __future__ import division, print_function
+import sys
+import multiprocessing
+import mst.mdsplus as mds
+from subprocess import check_call
+
+_PROCS = multiprocessing.cpu_count() - 1
+
+def _processor(shot_q):
+    while 1:
+        try:
+            shot = shot_q.get(True, 1)
+            try:
+                check_call('mstxray-procshot ' + str(shot), shell=True)
+            except Exception, ex:
+                print('Error processing shot:', shot)
+                print(ex)
+        except Exception, ex:
+            break
+
+
+if __name__ == '__main__':
+    # Get a list of all shots to process. 
+    shots = []
+    dates = [int(arg) for arg in sys.argv[1:]]
+    for date in dates:
+        shots.extend(mds.get_shot_list(date))
+        
+    # Create queues. 
+    shot_q = multiprocessing.Queue()
+
+    # Put shots into the queue for processing. 
+    for shot in shots:
+        shot_q.put(shot)
+    
+    procs = []
+    
+    # Start the processor processes.
+    for i in range(_PROCS):
+        p = multiprocessing.Process(target=_processor, args=(shot_q, ))
+        p.daemon = True
+        p.start()
+        procs.append(p)
+    
+    for p in procs:
+        p.join()

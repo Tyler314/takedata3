@@ -1,0 +1,1875 @@
+No detector efficiency for SN 7
+No detector efficiency for SN 8
+No detector efficiency for SN 9
+No detector efficiency for SN 10
+No detector efficiency for SN 11
+No detector efficiency for SN 13
+No detector efficiency for SN 14
+No detector efficiency for SN 15
+No detector efficiency for SN 16
+-------------------------------------------------------------------------------
+Creating processed data for detector: 1
+Fitting data...
+running clean
+running install
+running build
+running build_ext
+building 'mod_66b03b6d893518106768' extension
+creating build
+creating build/temp.linux-x86_64-2.7
+gcc -pthread -fno-strict-aliasing -g -O2 -DNDEBUG -O2 -fPIC -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/include/python2.7 -c mod_66b03b6d893518106768.c -o build/temp.linux-x86_64-2.7/mod_66b03b6d893518106768.o
+creating build/lib.linux-x86_64-2.7
+gcc -pthread -shared -g build/temp.linux-x86_64-2.7/mod_66b03b6d893518106768.o -L/opt/lib -lpython2.7 -o build/lib.linux-x86_64-2.7/mod_66b03b6d893518106768.so
+running install_lib
+copying build/lib.linux-x86_64-2.7/mod_66b03b6d893518106768.so -> /tmp/66b03b6d893518106768
+running install_egg_info
+Writing /tmp/66b03b6d893518106768/UNKNOWN-0.0.0-py2.7.egg-info
+running clean
+running install
+running build
+running build_ext
+building 'mod_7197ae256f847343a329' extension
+creating build
+creating build/temp.linux-x86_64-2.7
+gcc -pthread -fno-strict-aliasing -g -O2 -DNDEBUG -O2 -fPIC -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/include/python2.7 -c mod_7197ae256f847343a329.c -o build/temp.linux-x86_64-2.7/mod_7197ae256f847343a329.o
+creating build/lib.linux-x86_64-2.7
+gcc -pthread -shared -g build/temp.linux-x86_64-2.7/mod_7197ae256f847343a329.o -L/opt/lib -lpython2.7 -o build/lib.linux-x86_64-2.7/mod_7197ae256f847343a329.so
+running install_lib
+copying build/lib.linux-x86_64-2.7/mod_7197ae256f847343a329.so -> /tmp/7197ae256f847343a329
+running install_egg_info
+Writing /tmp/7197ae256f847343a329/UNKNOWN-0.0.0-py2.7.egg-info
+running clean
+running install
+running build
+running build_ext
+building 'mod_4e329aadda0965291959' extension
+creating build
+creating build/temp.linux-x86_64-2.7
+gcc -pthread -fno-strict-aliasing -g -O2 -DNDEBUG -O2 -fPIC -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/include/python2.7 -c mod_4e329aadda0965291959.c -o build/temp.linux-x86_64-2.7/mod_4e329aadda0965291959.o
+creating build/lib.linux-x86_64-2.7
+gcc -pthread -shared -g build/temp.linux-x86_64-2.7/mod_4e329aadda0965291959.o -L/opt/lib -lpython2.7 -o build/lib.linux-x86_64-2.7/mod_4e329aadda0965291959.so
+running install_lib
+copying build/lib.linux-x86_64-2.7/mod_4e329aadda0965291959.so -> /tmp/4e329aadda0965291959
+running install_egg_info
+Writing /tmp/4e329aadda0965291959/UNKNOWN-0.0.0-py2.7.egg-info
+running clean
+running install
+running build
+running build_ext
+building 'mod_6fa9313a47d49adbaeb7' extension
+creating build
+creating build/temp.linux-x86_64-2.7
+gcc -pthread -fno-strict-aliasing -g -O2 -DNDEBUG -O2 -fPIC -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/include/python2.7 -c mod_6fa9313a47d49adbaeb7.c -o build/temp.linux-x86_64-2.7/mod_6fa9313a47d49adbaeb7.o
+creating build/lib.linux-x86_64-2.7
+gcc -pthread -shared -g build/temp.linux-x86_64-2.7/mod_6fa9313a47d49adbaeb7.o -L/opt/lib -lpython2.7 -o build/lib.linux-x86_64-2.7/mod_6fa9313a47d49adbaeb7.so
+running install_lib
+copying build/lib.linux-x86_64-2.7/mod_6fa9313a47d49adbaeb7.so -> /tmp/6fa9313a47d49adbaeb7
+running install_egg_info
+Writing /tmp/6fa9313a47d49adbaeb7/UNKNOWN-0.0.0-py2.7.egg-info
+running clean
+running install
+running build
+running build_ext
+building 'mod_e7d4dbd2a98c40851e5c' extension
+creating build
+creating build/temp.linux-x86_64-2.7
+gcc -pthread -fno-strict-aliasing -g -O2 -DNDEBUG -O2 -fPIC -UNDEBUG -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/include/python2.7 -c mod_e7d4dbd2a98c40851e5c.c -o build/temp.linux-x86_64-2.7/mod_e7d4dbd2a98c40851e5c.o
+creating build/lib.linux-x86_64-2.7
+gcc -pthread -shared -g build/temp.linux-x86_64-2.7/mod_e7d4dbd2a98c40851e5c.o -L/opt/lib -lpython2.7 -o build/lib.linux-x86_64-2.7/mod_e7d4dbd2a98c40851e5c.so
+running install_lib
+copying build/lib.linux-x86_64-2.7/mod_e7d4dbd2a98c40851e5c.so -> /tmp/e7d4dbd2a98c40851e5c
+running install_egg_info
+Writing /tmp/e7d4dbd2a98c40851e5c/UNKNOWN-0.0.0-py2.7.egg-info
+running clean
+running install
+running build
+running build_ext
+building 'mod_31fe27e25da6a233b345' extension
+creating build
+creating build/temp.linux-x86_64-2.7
+gcc -pthread -fno-strict-aliasing -g -O2 -DNDEBUG -O2 -fPIC -UNDEBUG -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/lib/python2.7/site-packages/numpy/core/include -I/opt/include/python2.7 -c mod_31fe27e25da6a233b345.c -o build/temp.linux-x86_64-2.7/mod_31fe27e25da6a233b345.o
+creating build/lib.linux-x86_64-2.7
+gcc -pthread -shared -g build/temp.linux-x86_64-2.7/mod_31fe27e25da6a233b345.o -L/opt/lib -lpython2.7 -o build/lib.linux-x86_64-2.7/mod_31fe27e25da6a233b345.so
+running install_lib
+copying build/lib.linux-x86_64-2.7/mod_31fe27e25da6a233b345.so -> /tmp/31fe27e25da6a233b345
+running install_egg_info
+Writing /tmp/31fe27e25da6a233b345/UNKNOWN-0.0.0-py2.7.egg-info
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 2
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 3
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 4
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 7
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 8
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 9
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 10
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 11
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 13
+Fitting data...
+pulsefit...
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 14
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 15
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 16
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 18
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 19
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+done
+x1
+x2
+x3
+x4
+x5
+Computing efficiency...
+6
+-------------------------------------------------------------------------------
+Creating processed data for detector: 21
+Fitting data...
+pulsefit...
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+
+MKL ERROR: Parameter 4 was incorrect on entry to DGESV 
+done
+getting dead time...
+Failed to process data for sn: 21
+Exception: unsupported operand type(s) for -: 'int' and 'NoneType'
+Deleting: /data/mst/115/02/18/hxr/mst_hxr_1150218060.tree
+Deleting: /data/mst/115/02/18/hxr/mst_hxr_1150218060.datafile
+Deleting: /data/mst/115/02/18/hxr/mst_hxr_1150218060.characteristics
+###############################################################################
+Creating tree for shot: 1150218060
+Opening tree for editing...
+proc_version
+det_in_use
+###########################################################
+Detector: 1 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 2 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 3 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 4 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 7 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 8 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 9 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 10 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 11 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 13 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 14 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 15 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 16 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 18 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+###########################################################
+Detector: 19 -- 1150218060
+Adding nodes...
+    det_type
+    sigma_E
+    E_min
+    E_max
+    etendue
+    port_sn
+    R
+    Z
+    p_tilt
+    t_start
+    t_end
+    efficiency_E
+    efficiency
+    time
+    energy
+    eff
+    flags
+    dead_time
+Writing tree...
+###############################################################################
+Saving data for shot: 1150218060
+Opening tree for editing...
+Processing code version: 201408
+Detectors in use:
+[ 1  2  3  4  7  8  9 10 11 13 14 15 16 18 19]
+###########################################################
+Detector: 1 -- 1150218060
+det_type Amptek1
+sigma_E 0.253134106075
+E_min 2.78289144572
+E_max 35.7168584292
+etendue 1.00200806268e-08
+port_sn 5
+R 1.84731666485
+Z 0.692673954466
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 2 -- 1150218060
+det_type Amptek1
+sigma_E 0.570930439732
+E_min 2.78289144572
+E_max 35.7168584292
+etendue 1.00200806268e-08
+port_sn 7
+R 1.75367758358
+Z 0.731375862567
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 3 -- 1150218060
+det_type Amptek1
+sigma_E 0.617539021774
+E_min 2.78289144572
+E_max 35.7168584292
+etendue 1.00200806268e-08
+port_sn 3
+R 1.94107520036
+Z 0.654578207269
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 4 -- 1150218060
+det_type Amptek1
+sigma_E 0.521739375674
+E_min 2.78289144572
+E_max 35.7168584292
+etendue 1.00200806268e-08
+port_sn 1
+R 2.03499356167
+Z 0.615640000542
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 7 -- 1150218060
+det_type eV1
+sigma_E 0.367696642912
+E_min 2.68384192096
+E_max 100.0
+etendue 1.00200806268e-08
+port_sn 16
+R 1.3433688655
+Z 0.805091927084
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 8 -- 1150218060
+det_type eV1
+sigma_E 1.1915156443
+E_min 2.68384192096
+E_max 100.0
+etendue 1.00200806268e-08
+port_sn 0
+R 2.08147714194
+Z 0.594988382283
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 9 -- 1150218060
+det_type eV1
+sigma_E 1.23099131108
+E_min 2.68384192096
+E_max 100.0
+etendue 1.00200806268e-08
+port_sn 2
+R 1.98750596496
+Z 0.634092600251
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 10 -- 1150218060
+det_type eV1
+sigma_E 0.400677634605
+E_min 2.68384192096
+E_max 100.0
+etendue 5.4817396885e-09
+port_sn 13
+R 2.16405403651
+Z 0.461832422266
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 11 -- 1150218060
+det_type eV1
+sigma_E 1.25909936924
+E_min 2.68384192096
+E_max 100.0
+etendue 1.00200806268e-08
+port_sn 10
+R 1.61187139417
+Z 0.789137614902
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 13 -- 1150218060
+det_type eV1
+sigma_E 1.0484994146
+E_min 2.68384192096
+E_max 100.0
+etendue 1.00200806268e-08
+port_sn 4
+R 1.89409081352
+Z 0.672960254133
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 14 -- 1150218060
+det_type eV1
+sigma_E 1.25376553941
+E_min 2.68384192096
+E_max 100.0
+etendue 1.00200806268e-08
+port_sn 6
+R 1.80042291857
+Z 0.711791435648
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 15 -- 1150218060
+det_type eV1
+sigma_E 0.495806476428
+E_min 2.68384192096
+E_max 100.0
+etendue 1.00200806268e-08
+port_sn 12
+R 1.51798026948
+Z 0.828237532251
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 16 -- 1150218060
+det_type eV1
+sigma_E 0.5001350964
+E_min 2.68384192096
+E_max 100.0
+etendue 1.00200806268e-08
+port_sn 14
+R 2.10446171022
+Z 0.483854046091
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 18 -- 1150218060
+det_type Amptek1
+sigma_E 0.238609331515
+E_min 2.78289144572
+E_max 35.7168584292
+etendue 1.00200806268e-08
+port_sn 11
+R 1.56597529454
+Z 0.809774963992
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+###########################################################
+Detector: 19 -- 1150218060
+det_type Amptek1
+sigma_E 0.691733534936
+E_min 2.78289144572
+E_max 35.7168584292
+etendue 1.00200806268e-08
+port_sn 9
+R 1.65950495801
+Z 0.770795907355
+p_tilt 2.749
+t_start -0.002
+t_end 0.06
+Writing efficiency_E...
+Writing efficiency...
+Writing time...
+Writing energy...
+Writing eff...
+Writing flags...
+Writing dead_time...
+Writing tree...
+Done.

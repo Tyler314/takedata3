@@ -1,0 +1,455 @@
+#!/opt/bin/python
+from __future__ import division, print_function
+import time
+import Tkinter as tk
+import tkMessageBox
+import tkSimpleDialog
+import ttk
+import tktoolbox as tkt
+import threading
+
+from mstxray import digitizer
+from mstxray import mpl as mstmpl
+from mstxray import physical as mp
+from mstxray import rawdata
+from mst import mdsplus as mds
+
+ZERO_LEVEL  = 4096     # The zero level on the digitizer. 
+DT          = 1/(60e6) # The time step.
+
+# The T0 time is set by the trigger. Unfortunately, this data isn't available
+# from MDSplus when we are storing data, so it has to be hard-coded. 
+T0 = -0.002
+
+class App(object):
+    def __init__(self):
+        def key(p):
+            return p.impact_param()
+
+        self._ports = sorted(mp.Port.get_all(in_use=True), key=key)
+        
+        self._td_thread = None
+        self._stop_evt = threading.Event()
+        
+        # Combo boxes for each port. 
+        self._combo_filt = {} 
+        self._combo_aper = {}
+        self._combo_det  = {}
+
+        self._filt_map = {}
+        for filt in mp.XRayFilter.get_all(in_use=True):
+            self._filt_map[str(filt)] = filt
+        self._filt_map[''] = None
+            
+        self._aper_map = {}
+        for aper in mp.XRayAperture.get_all(in_use=True):
+            self._aper_map[str(aper)] = aper
+        self._aper_map[''] = None
+            
+        self._det_map = {}
+        for det in mp.XRayDetector.get_all(in_use=True):
+            self._det_map[str(det)] = det
+        self._det_map[''] = None
+
+        # Store mapping from port -> (filter, aperture, detector) objects for 
+        # use by the thread. 
+        self._filt_aper_det_map = {}
+
+
+        #######################################################################
+        # Construct GUI
+        #######################################################################
+        self._master = tk.Tk()
+        self._master.title('X-Ray Take Data')
+        
+        #######################################################################
+        # Two panes, one for buttons, one for tabs. 
+        #######################################################################
+        panes = tk.PanedWindow(master=self._master, orient=tk.HORIZONTAL,
+                               width=800, height=600)
+        panes.pack(fill=tk.BOTH, expand=1)
+        
+        #######################################################################
+        # Button frame. 
+        #######################################################################
+        frame = tk.Frame(panes)
+        frame.pack(fill=tk.BOTH, expand=1)
+        panes.add(frame, width=150)
+        row = 0
+        label = tk.Label(frame, text='Sample time:', underline=1)
+        label.grid(row=row, column=0, sticky=tk.W)
+        
+        self._entry_time = tk.Entry(frame)
+        self._entry_time.grid(row=row, column=1, sticky=tk.EW)
+        
+        
+        row += 1
+        btn = tk.Button(frame, text='Save', underline=0, command=self._save)
+        btn.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+        
+        row += 1
+        btn = tk.Button(frame, text='Calib Shots', underline=0, 
+                        command=self._take_calib_data)
+        btn.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+
+        row += 1
+        btn = tk.Button(frame, text='Plot', underline=0, command=self._plot)
+        btn.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+        
+        row += 1
+        self._btn_run = tk.Button(frame, 
+                                  text='Run', 
+                                  underline=0, 
+                                  command=self._td_run)
+        self._btn_run.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+
+        row += 1
+        self._btn_stop = tk.Button(frame, 
+                                   text='Stop', 
+                                   underline=1, 
+                                   command=self._td_stop,
+                                   state=tk.DISABLED)
+        self._btn_stop.grid(row=row, column=0, sticky=tk.EW, columnspan=2)
+        
+        frame.columnconfigure(0, weight=0)
+        frame.columnconfigure(1, weight=1)
+
+        #######################################################################
+        # Notebook. 
+        #######################################################################
+        notebook = ttk.Notebook(panes)
+        notebook.pack(fill=tk.BOTH, expand=1)
+        panes.add(notebook)
+
+        #######################################################################
+        # Build input array.
+        #######################################################################
+        # Labels. 
+        frame = tk.Frame(notebook)
+        frame.pack(fill=tk.BOTH, expand=1)
+        notebook.add(frame, text='Detectors')
+        
+        master = frame
+        kwargs = { 'row':0, 'sticky':tk.W }
+        tk.Label(master, text='Port'    ).grid(column=0, **kwargs)
+        tk.Label(master, text='Filter'  ).grid(column=1, **kwargs)
+        tk.Label(master, text='Aperture').grid(column=2, **kwargs)
+        tk.Label(master, text='Detector').grid(column=3, **kwargs)
+        
+        row = 0
+        for port in self._ports:
+            row += 1
+            label = tk.Label(master, text=port.name)
+            label.grid(row=row, column=0, sticky=tk.W)
+            
+            combo = ttk.Combobox(master, state='readonly')
+            combo['values'] = [''] + mp.XRayFilter.get_all(in_use=True)
+            combo.grid(row=row, column=1, sticky=tk.EW)
+            self._combo_filt[port] = combo
+        
+            combo = ttk.Combobox(master, state='readonly')
+            combo['values'] = [''] + mp.XRayAperture.get_all(in_use=True)
+            combo.grid(row=row, column=2, sticky=tk.EW)
+            self._combo_aper[port] = combo
+            
+            combo = ttk.Combobox(master, state='readonly')
+            combo['values'] = [''] + mp.XRayDetector.get_all(in_use=True)
+            combo.grid(row=row, column=3, sticky=tk.EW)
+            self._combo_det[port] = combo
+
+        # Make combo boxes expand with the window. 
+        frame.columnconfigure(0, weight=0)
+        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=1)
+        frame.columnconfigure(3, weight=1)
+        
+        # Set all combo items to the empty value. 
+        for port in self._ports:
+            self._combo_filt[port].current(newindex=0)
+            self._combo_aper[port].current(newindex=0)
+            self._combo_det [port].current(newindex=0)
+
+        #######################################################################
+        # Configuration diagram. 
+        #######################################################################
+        self._mpl_diagram = tkt.MPLFrame(notebook)
+        notebook.add(self._mpl_diagram, text='Diagram')
+  
+        self._load()
+
+
+    def _get_filt(self, port):
+        try:
+            return self._filt_map[self._combo_filt[port].get()]
+        except:
+            return None
+
+
+    def _get_aper(self, port):
+        try:
+            return self._aper_map[self._combo_aper[port].get()]
+        except:
+            return None
+
+
+    def _get_det(self, port):
+        try:
+            return self._det_map[self._combo_det[port].get()]
+        except:
+            return None
+
+
+    def _get_sample_time(self):
+        try:
+            return int(self._entry_time.get())
+        except:
+            return None
+        
+
+    def run(self):
+        self._master.mainloop()
+        
+        
+    def _save(self):
+        save_data = {}
+        save_data['sample_time'] = self._get_sample_time()
+        for port in self._ports:
+            d = {}
+            d['filt'] = self._combo_filt[port].current()
+            d['aper'] = self._combo_aper[port].current()
+            d['det' ] = self._combo_det [port].current()
+            save_data[port.sn] = d
+            
+        tkt.io.dump('mstxray-takedata2', 
+                    save_data=save_data, 
+                    mpl_diagram=self._mpl_diagram.get_settings())
+
+            
+    def _load(self):
+        save_data, mpl_diagram = tkt.io.load('mstxray-takedata2', 
+                                             'save_data',
+                                             'mpl_diagram')
+        try:
+            sample_time = str(save_data['sample_time'])
+            self._entry_time.insert(0, sample_time)
+        except:
+            print('    Failed to load sample time.')
+
+        for port in self._ports:
+            print('Loading data for port:', port)
+            if save_data is None or port.sn not in save_data:
+                print('    No data found.')
+                continue
+
+            try:
+                idx = save_data[port.sn]['filt']
+                self._combo_filt[port].current(newindex=idx)
+            except:
+                print('    Failed to load filter.')
+
+            try:
+                idx = save_data[port.sn]['aper']
+                self._combo_aper[port].current(newindex=idx)
+            except:
+                print('    Failed to load aperture.')
+
+            try:
+                idx = save_data[port.sn]['det']
+                self._combo_det[port].current(newindex=idx)
+            except:
+                print('    Failed to load detector.')
+
+        if mpl_diagram is not None:
+            self._mpl_diagram.load_settings(mpl_diagram)
+
+
+    def _td_run(self):
+        print('Saving configuration.')
+        self._save()
+
+        # Store config for thread. 
+        self._filt_aper_det_map = {}
+        for port in self._ports:
+            filt = self._get_filt(port)
+            aper = self._get_aper(port)
+            det  = self._get_det (port)
+            self._filt_aper_det_map[port] = (filt, aper, det)
+
+        if self._get_sample_time() is None or self._get_sample_time() < 1:
+            tkMessageBox.showerror('Error', 'Sample time is incorrect.')
+            return
+        
+        print('Starting thread.')
+        self._td_thread = threading.Thread(target=self._td_loop, 
+                                           args=(self._get_sample_time(),))
+        self._stop_evt.clear()
+        self._td_thread.start()
+        
+        for port in self._ports:
+            self._combo_filt[port]['state'] = 'disabled'
+            self._combo_aper[port]['state'] = 'disabled'
+            self._combo_det [port]['state'] = 'disabled'
+        
+        self._btn_run   ['state'] = tk.DISABLED
+        self._entry_time['state'] = tk.DISABLED
+        self._btn_stop  ['state'] = tk.NORMAL
+
+
+    def _td_stop(self):
+        print('Waiting for thread to stop.')
+        self._stop_evt.set()
+        self._td_thread.join()
+
+        self._btn_stop  ['state'] = tk.DISABLED
+        self._btn_run   ['state'] = tk.NORMAL
+        self._entry_time['state'] = tk.NORMAL
+
+        for port in self._ports:
+            self._combo_filt[port]['state'] = 'readonly'
+            self._combo_aper[port]['state'] = 'readonly'
+            self._combo_det [port]['state'] = 'readonly'
+
+
+    def _td_loop(self, sample_time):
+        digi = digitizer.get_client()
+
+        print('\nZeroing digitizer.')
+        digi.zero(value=ZERO_LEVEL)
+
+        while 1:
+            print('Arming digitizer.')
+            digi.arm(int((sample_time + 2) * 1e-3 * 60e6))
+
+            # Wait for the next shot (or stop event).
+            shot = mds.current_shot()
+
+            print('Waiting for shot (currently: {0}).'.format(shot))
+            while 1:
+
+                current_shot = mds.current_shot()
+
+                if current_shot != shot:
+                    shot = current_shot
+                    break
+
+                if self._stop_evt.is_set():
+                    break
+
+                time.sleep(5)
+
+            # Check if we should stop running.
+            if self._stop_evt.is_set():
+                print('Thread stopping.')
+                return
+
+            # Collect data.
+            self._save_data(digi, shot)
+
+
+    def _save_data(self, digi, shot):
+        print('Saving data for shot {0}.'.format(shot))
+        timestamp = time.time()
+
+        # Sleep to wait for all data. It could rarely occur that we get here
+        # before all the data is read into the digitizer. If we sleep for 
+        # half a second, we are assured that we have all the data, because the 
+        # card can't take more data than that (at least at our sample rate). 
+        time.sleep(5)
+        data_list = []
+        
+        for port in self._ports:
+            filt, aper, det = self._filt_aper_det_map[port]
+            
+            if det is None:
+                continue
+            
+            data = rawdata.RawData(det, shot)            
+            data.port = port            
+            data.filter = filt
+            data.aperture = aper
+            data.dt = DT
+            data.t0 = T0
+            data.timestamp = timestamp
+            data.y = digi.get_data(det.digiCard, det.digiChan)
+            data_list.append(data)
+
+        rawdata.save(data_list)
+
+
+    def _plot(self):
+        canvas = self._mpl_diagram.get_canvas()
+        fig = self._mpl_diagram.get_figure()
+        fig.clf()
+
+        ax = fig.gca()
+        ax.grid()
+
+        ports = self._ports
+
+        mstmpl.plot_poloidal_cross_section(ax, ports=ports)
+
+        # Loop through each detector config and plot. 
+        for port in ports:
+            filt = self._get_filt(port)
+            aper = self._get_aper(port)
+            det  = self._get_det (port)
+            
+            mstmpl.plot_port(ax, port, outer_shell=False, 
+                             inner_shell=False, exit_point=False,
+                             impact_point=False)
+
+            if det is None:
+                continue
+
+            standoff = 0
+            if filt is not None:
+                mstmpl.plot_filter(ax, filt, port, standoff)
+                standoff += filt.tubeLen
+
+            if aper is not None:
+                mstmpl.plot_aperture(ax, aper, port, standoff)
+                standoff += aper.tubeLen
+
+            if det is not None:
+                mstmpl.plot_detector(ax, det, port, standoff)
+
+        canvas.draw()
+
+
+    def _take_calib_data(self):
+        detSN = tkSimpleDialog.askinteger('Detector', 'Detector serial number')
+        numShots = tkSimpleDialog.askinteger('Shots', 'Number of shots')
+            
+        detector = mp.XRayDetector.get(detSN)
+        digi = digitizer.get_client()
+
+        print('\nZeroing digitizer.')
+        digi.zero(value=ZERO_LEVEL)
+
+        for i in range(numShots):
+            print('Taking data: {0}'.format(i))
+
+            # Maximum number of samples. 
+            digi.arm(2**24 - 3)
+            digi.trigger()
+
+            # Wait for data to be collected. 
+            time.sleep(0.4)
+
+            print('Saving data.')
+
+            timestamp = time.time()
+
+            shot = rawdata.get_next_shot()
+            data = rawdata.RawData(detector, shot)
+            data.dt = DT
+            data.t0 = 0
+            data.timestamp = timestamp
+            data.y = digi.get_data(detector.digiCard, detector.digiChan)
+
+            rawdata.save((data,))
+
+            
+if __name__ == '__main__':
+    app = App()
+    app.run()
